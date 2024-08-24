@@ -10,6 +10,10 @@ pub(crate) struct ExecutionContext<'src: 'run, 'run> {
 }
 
 impl<'src: 'run, 'run> ExecutionContext<'src, 'run> {
+  pub(crate) fn change_directory(&self) -> bool {
+    !self.module.settings.no_cd
+  }
+
   pub(crate) fn working_directory(&self) -> PathBuf {
     let base = if self.module.is_submodule() {
       &self.module.working_directory

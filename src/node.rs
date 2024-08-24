@@ -296,7 +296,8 @@ impl<'src> Node<'src> for Set<'src> {
       | Setting::Quiet(value)
       | Setting::Unstable(value)
       | Setting::WindowsPowerShell(value)
-      | Setting::IgnoreComments(value) => {
+      | Setting::IgnoreComments(value)
+      | Setting::NoCd(value) => {
         set.push_mut(value.to_string());
       }
       Setting::ScriptInterpreter(Interpreter { command, arguments })

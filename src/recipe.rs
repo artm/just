@@ -133,7 +133,7 @@ impl<'src, D> Recipe<'src, D> {
   }
 
   fn working_directory<'a>(&'a self, context: &'a ExecutionContext) -> Option<PathBuf> {
-    if self.change_directory() {
+    if self.change_directory() && context.change_directory() {
       Some(context.working_directory())
     } else {
       None

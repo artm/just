@@ -236,6 +236,26 @@ fn no_cd_overrides_setting() {
 }
 
 #[test]
+fn no_cd_setting() {
+  Test::new()
+    .justfile(
+      "
+        set no-cd
+        default:
+          basename $PWD
+      ",
+    )
+    .current_dir("start_dir")
+    .tree(tree! {
+      start_dir: {
+      }
+    })
+    .stderr("basename $PWD\n")
+    .stdout("start_dir\n")
+    .run();
+}
+
+#[test]
 fn working_dir_in_submodule_is_relative_to_module_path() {
   Test::new()
     .write(
