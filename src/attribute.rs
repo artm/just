@@ -11,6 +11,7 @@ use super::*;
 pub(crate) enum Attribute<'src> {
   Confirm(Option<StringLiteral<'src>>),
   Doc(Option<StringLiteral<'src>>),
+  Cd,
   Extension(StringLiteral<'src>),
   Group(StringLiteral<'src>),
   Linux,
@@ -32,6 +33,7 @@ impl AttributeDiscriminant {
       Self::Group | Self::Extension => 1..=1,
       Self::Linux
       | Self::Macos
+      | Self::Cd
       | Self::NoCd
       | Self::NoExitMessage
       | Self::NoQuiet
@@ -79,6 +81,7 @@ impl<'src> Attribute<'src> {
       AttributeDiscriminant::Group => Self::Group(arguments.into_iter().next().unwrap()),
       AttributeDiscriminant::Linux => Self::Linux,
       AttributeDiscriminant::Macos => Self::Macos,
+      AttributeDiscriminant::Cd => Self::Cd,
       AttributeDiscriminant::NoCd => Self::NoCd,
       AttributeDiscriminant::NoExitMessage => Self::NoExitMessage,
       AttributeDiscriminant::NoQuiet => Self::NoQuiet,
@@ -115,6 +118,7 @@ impl<'src> Display for Attribute<'src> {
       | Self::Doc(None)
       | Self::Linux
       | Self::Macos
+      | Self::Cd
       | Self::NoCd
       | Self::NoExitMessage
       | Self::NoQuiet

@@ -256,6 +256,28 @@ fn no_cd_setting() {
 }
 
 #[test]
+fn cd_attr_overrides_no_cd_setting() {
+  Test::new()
+    .current_dir("justfile_dir/start_dir")
+    .tree(tree! {
+      justfile_dir: {
+        "justfile": "
+          set no-cd
+
+          [cd]
+          default:
+            basename $PWD
+        ",
+        start_dir: {
+        }
+      }
+    })
+    .stderr("basename $PWD\n")
+    .stdout("justfile_dir\n")
+    .run();
+}
+
+#[test]
 fn working_dir_in_submodule_is_relative_to_module_path() {
   Test::new()
     .write(

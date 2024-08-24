@@ -110,10 +110,6 @@ impl<'src, D> Recipe<'src, D> {
     settings.positional_arguments || self.attributes.contains(&Attribute::PositionalArguments)
   }
 
-  pub(crate) fn change_directory(&self) -> bool {
-    !self.attributes.contains(&Attribute::NoCd)
-  }
-
   pub(crate) fn enabled(&self) -> bool {
     let windows = self.attributes.contains(&Attribute::Windows);
     let linux = self.attributes.contains(&Attribute::Linux);
@@ -133,7 +129,9 @@ impl<'src, D> Recipe<'src, D> {
   }
 
   fn working_directory<'a>(&'a self, context: &'a ExecutionContext) -> Option<PathBuf> {
-    if self.change_directory() && context.change_directory() {
+    if context.change_directory() && !self.attributes.contains(&Attribute::NoCd)
+      || self.attributes.contains(&Attribute::Cd)
+    {
       Some(context.working_directory())
     } else {
       None
