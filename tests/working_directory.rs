@@ -268,12 +268,30 @@ fn cd_attr_overrides_no_cd_setting() {
           default:
             basename $PWD
         ",
-        start_dir: {
-        }
+        start_dir: {}
       }
     })
     .stderr("basename $PWD\n")
     .stdout("justfile_dir\n")
+    .run();
+}
+
+#[test]
+fn cd_attr_with_path() {
+  Test::new()
+    .current_dir("justfile_dir")
+    .tree(tree! {
+      justfile_dir: {
+        "justfile": r#"
+          [cd("desired_work_dir")]
+          default:
+            basename $PWD
+        "#,
+        desired_work_dir: {}
+      }
+    })
+    .stderr("basename $PWD\n")
+    .stdout("desired_work_dir\n")
     .run();
 }
 

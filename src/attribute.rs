@@ -11,7 +11,7 @@ use super::*;
 pub(crate) enum Attribute<'src> {
   Confirm(Option<StringLiteral<'src>>),
   Doc(Option<StringLiteral<'src>>),
-  Cd,
+  Cd(Option<StringLiteral<'src>>),
   Extension(StringLiteral<'src>),
   Group(StringLiteral<'src>),
   Linux,
@@ -29,11 +29,10 @@ pub(crate) enum Attribute<'src> {
 impl AttributeDiscriminant {
   fn argument_range(self) -> RangeInclusive<usize> {
     match self {
-      Self::Confirm | Self::Doc => 0..=1,
+      Self::Confirm | Self::Doc | Self::Cd => 0..=1,
       Self::Group | Self::Extension => 1..=1,
       Self::Linux
       | Self::Macos
-      | Self::Cd
       | Self::NoCd
       | Self::NoExitMessage
       | Self::NoQuiet
@@ -77,11 +76,11 @@ impl<'src> Attribute<'src> {
     Ok(match discriminant {
       AttributeDiscriminant::Confirm => Self::Confirm(arguments.into_iter().next()),
       AttributeDiscriminant::Doc => Self::Doc(arguments.into_iter().next()),
+      AttributeDiscriminant::Cd => Self::Cd(arguments.into_iter().next()),
       AttributeDiscriminant::Extension => Self::Extension(arguments.into_iter().next().unwrap()),
       AttributeDiscriminant::Group => Self::Group(arguments.into_iter().next().unwrap()),
       AttributeDiscriminant::Linux => Self::Linux,
       AttributeDiscriminant::Macos => Self::Macos,
-      AttributeDiscriminant::Cd => Self::Cd,
       AttributeDiscriminant::NoCd => Self::NoCd,
       AttributeDiscriminant::NoExitMessage => Self::NoExitMessage,
       AttributeDiscriminant::NoQuiet => Self::NoQuiet,
@@ -111,14 +110,15 @@ impl<'src> Display for Attribute<'src> {
     match self {
       Self::Confirm(Some(argument))
       | Self::Doc(Some(argument))
+      | Self::Cd(Some(argument))
       | Self::Extension(argument)
       | Self::Group(argument) => write!(f, "({argument})")?,
       Self::Script(Some(shell)) => write!(f, "({shell})")?,
       Self::Confirm(None)
       | Self::Doc(None)
+      | Self::Cd(None)
       | Self::Linux
       | Self::Macos
-      | Self::Cd
       | Self::NoCd
       | Self::NoExitMessage
       | Self::NoQuiet

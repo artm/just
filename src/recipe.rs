@@ -129,9 +129,14 @@ impl<'src, D> Recipe<'src, D> {
   }
 
   fn working_directory<'a>(&'a self, context: &'a ExecutionContext) -> Option<PathBuf> {
-    if context.change_directory() && !self.attributes.contains(&Attribute::NoCd)
-      || self.attributes.contains(&Attribute::Cd)
-    {
+    for attribute in &self.attributes {
+      if let Attribute::Cd(Some(directory)) = attribute {
+        return Some(PathBuf::from(&directory.cooked));
+      } else if let Attribute::Cd(None) = attribute {
+        return Some(context.working_directory());
+      }
+    }
+    if context.change_directory() && !self.attributes.contains(&Attribute::NoCd) {
       Some(context.working_directory())
     } else {
       None
